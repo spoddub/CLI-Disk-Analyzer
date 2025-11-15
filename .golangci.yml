@@ -1,0 +1,21 @@
+linters:
+  disable-all: true
+  enable:
+    - govet
+    - staticcheck
+    - gosimple
+    - errcheck
+    - ineffassign
+    - unused
+    - gofmt
+    - goimports
+    - revive
+
+run:
+  timeout: 5m
+  tests: true
+  relative-path-mode: gomod
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
