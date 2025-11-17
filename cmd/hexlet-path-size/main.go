@@ -2,21 +2,15 @@ package main
 
 import (
 	"code"
-	"fmt"
+	"context"
 	"log"
 	"os"
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		log.Fatal("no path")
-	}
+	app := pathsize.NewApp()
 
-	path := os.Args[1]
-	size, err := pathsize.GetSize(path)
-	if err != nil {
+	if err := app.Run(context.Background(), os.Args); err != nil {
 		log.Fatal(err)
 	}
-
-	fmt.Printf("%d\t%s\n", size, path)
 }
