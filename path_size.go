@@ -26,6 +26,11 @@ func NewApp() *cli.Command {
 				Aliases: []string{"a"},
 				Usage:   "include hidden files and directories",
 			},
+			&cli.BoolFlag{
+				Name:    "reclusive",
+				Aliases: []string{"r"},
+				Usage:   "recursive size of directories",
+			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			if cmd.NArg() < 1 {
@@ -33,8 +38,11 @@ func NewApp() *cli.Command {
 			}
 
 			path := cmd.Args().Get(0)
+
 			all := cmd.Bool("all")
-			size, err := GetSize(path, all)
+			reclusive := cmd.Bool("recursive")
+
+			size, err := GetSize(path, all, reclusive)
 
 			if err != nil {
 				return err
@@ -49,7 +57,7 @@ func NewApp() *cli.Command {
 	}
 }
 
-func GetSize(path string, all bool) (int64, error) {
+func GetSize(path string, all, reclusive bool) (int64, error) {
 	info, err := os.Lstat(path)
 
 	if err != nil {
@@ -74,7 +82,22 @@ func GetSize(path string, all bool) (int64, error) {
 		if !all && strings.HasPrefix(name, ".") {
 			continue
 		}
+
 		childPath := filepath.Join(path, name)
+
+		if entry.IsDir() {
+			if !reclusive {
+				continue
+			}
+
+			childSize, err := GetSize(childPath, all, reclusive)
+			if err != nil {
+				return 0, err
+			}
+			size += childSize
+			continue
+		}
+
 		childInfo, err := os.Lstat(childPath)
 
 		if err != nil {
