@@ -3,32 +3,33 @@ package code
 import (
 	"context"
 	"fmt"
-	"github.com/urfave/cli/v3"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/urfave/cli/v3"
 )
 
 func NewApp() *cli.Command {
 	return &cli.Command{
 		Name:      "hexlet-path-size",
-		Usage:     "print size of a file or directory; " + "supports -r (recursive), -H (human-readable), -a (include hidden)",
+		Usage:     "print size of a file or directory; supports -r (recursive), -H (human-readable), -a (include hidden)",
 		UsageText: "hexlet-path-size [global options]",
 		Flags: []cli.Flag{
 			&cli.BoolFlag{
 				Name:    "recursive",
 				Aliases: []string{"r"},
-				Usage:   "recursive size of directories (default: false)",
+				Usage:   "recursive size of directories",
 			},
 			&cli.BoolFlag{
 				Name:    "human",
 				Aliases: []string{"H"},
-				Usage:   "human-readable sizes (auto-select unit) (default: false)",
+				Usage:   "human-readable sizes (auto-select unit)",
 			},
 			&cli.BoolFlag{
 				Name:    "all",
 				Aliases: []string{"a"},
-				Usage:   "include hidden files and directories (default: false)",
+				Usage:   "include hidden files and directories",
 			},
 		},
 		Action: func(ctx context.Context, cmd *cli.Command) error {
@@ -37,28 +38,23 @@ func NewApp() *cli.Command {
 			}
 
 			path := cmd.Args().Get(0)
-
-			all := cmd.Bool("all")
 			recursive := cmd.Bool("recursive")
 			human := cmd.Bool("human")
+			all := cmd.Bool("all")
 
-			size, err := GetPathSize(path, recursive, human, all)
-
+			result, err := GetPathSize(path, recursive, human, all)
 			if err != nil {
 				return err
 			}
 
-			formatted := FormatSize(size, human)
-			fmt.Printf("%s\t%s\n", formatted, path)
-
+			fmt.Printf("%s\t%s\n", result, path)
 			return nil
 		},
 	}
 }
 
-func GetPathSize(path string, recursive, human, all bool) (int64, error) {
+func calculateSize(path string, recursive, all bool) (int64, error) {
 	info, err := os.Lstat(path)
-
 	if err != nil {
 		return 0, err
 	}
@@ -68,7 +64,6 @@ func GetPathSize(path string, recursive, human, all bool) (int64, error) {
 	}
 
 	entries, err := os.ReadDir(path)
-
 	if err != nil {
 		return 0, err
 	}
@@ -89,16 +84,16 @@ func GetPathSize(path string, recursive, human, all bool) (int64, error) {
 				continue
 			}
 
-			childSize, err := GetPathSize(childPath, recursive, human, all)
+			childSize, err := calculateSize(childPath, recursive, all)
 			if err != nil {
 				return 0, err
 			}
+
 			size += childSize
 			continue
 		}
 
 		childInfo, err := os.Lstat(childPath)
-
 		if err != nil {
 			return 0, err
 		}
@@ -109,6 +104,15 @@ func GetPathSize(path string, recursive, human, all bool) (int64, error) {
 	}
 
 	return size, nil
+}
+
+func GetPathSize(path string, recursive, human, all bool) (string, error) {
+	size, err := calculateSize(path, recursive, all)
+	if err != nil {
+		return "", err
+	}
+
+	return FormatSize(size, human), nil
 }
 
 func FormatSize(size int64, human bool) string {
