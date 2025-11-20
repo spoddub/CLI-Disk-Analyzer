@@ -99,7 +99,7 @@ GLOBAL OPTIONS:
 
 ## FormatSize and size calculation
 
-- `GetSize(path string, all bool) (int64, error)`
+- `GetPathSize(path string, all bool) (int64, error)`
     - For a file: returns its size in bytes.
     - For a directory: sums sizes of files inside (respecting `all` and `recursive` flags in the CLI logic).
     - Hidden files and directories are skipped when `all` is false.

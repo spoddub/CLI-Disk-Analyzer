@@ -41,7 +41,7 @@ func NewApp() *cli.Command {
 			all := cmd.Bool("all")
 			recursive := cmd.Bool("recursive")
 
-			size, err := GetSize(path, all, recursive)
+			size, err := GetPathSize(path, all, recursive)
 
 			if err != nil {
 				return err
@@ -56,7 +56,7 @@ func NewApp() *cli.Command {
 	}
 }
 
-func GetSize(path string, all, reclusive bool) (int64, error) {
+func GetPathSize(path string, all, reclusive bool) (int64, error) {
 	info, err := os.Lstat(path)
 
 	if err != nil {
@@ -89,7 +89,7 @@ func GetSize(path string, all, reclusive bool) (int64, error) {
 				continue
 			}
 
-			childSize, err := GetSize(childPath, all, reclusive)
+			childSize, err := GetPathSize(childPath, all, reclusive)
 			if err != nil {
 				return 0, err
 			}
