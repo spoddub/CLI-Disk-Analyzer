@@ -40,14 +40,14 @@ func NewApp() *cli.Command {
 
 			all := cmd.Bool("all")
 			recursive := cmd.Bool("recursive")
+			human := cmd.Bool("human")
 
-			size, err := GetPathSize(path, all, recursive)
+			size, err := GetPathSize(path, recursive, human, all)
 
 			if err != nil {
 				return err
 			}
 
-			human := cmd.Bool("human")
 			formatted := FormatSize(size, human)
 			fmt.Printf("%s\t%s\n", formatted, path)
 
@@ -56,7 +56,7 @@ func NewApp() *cli.Command {
 	}
 }
 
-func GetPathSize(path string, all, reclusive bool) (int64, error) {
+func GetPathSize(path string, recursive, human, all bool) (int64, error) {
 	info, err := os.Lstat(path)
 
 	if err != nil {
@@ -85,11 +85,11 @@ func GetPathSize(path string, all, reclusive bool) (int64, error) {
 		childPath := filepath.Join(path, name)
 
 		if entry.IsDir() {
-			if !reclusive {
+			if !recursive {
 				continue
 			}
 
-			childSize, err := GetPathSize(childPath, all, reclusive)
+			childSize, err := GetPathSize(childPath, recursive, human, all)
 			if err != nil {
 				return 0, err
 			}
