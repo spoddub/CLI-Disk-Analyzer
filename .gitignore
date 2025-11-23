@@ -1,2 +1,8 @@
-bin
 *.cast
+bin/
+file_path
+path_size
+*.exe
+*.out
+*.test
+.idea/
