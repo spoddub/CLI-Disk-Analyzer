@@ -17,6 +17,9 @@ func main() {
 		Usage: "print size of a file or directory",
 		Action: func(ctx context.Context, cmd *cli.Command) error {
 			path := cmd.Args().Get(0)
+			if path == "" {
+				return fmt.Errorf("path is required")
+			}
 
 			size, err := code.GetPathSize(path, false, true, false)
 			if err != nil {
