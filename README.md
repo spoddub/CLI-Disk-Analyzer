@@ -34,8 +34,8 @@ It supports recursive size calculation, human readable output and optional inclu
 ### Clone the repository
 
 ```bash
-git clone this-repo
-cd this-repo
+git clone https://github.com/spoddub/CLI-Disk-Analyzer.git
+cd CLI-Disk-Analyzer
 ```
 
 ### Build
