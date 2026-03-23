@@ -1,5 +1,5 @@
 build:
-	bin/hexlet-path-size
+	go build -o ./bin/hexlet-path-size ./cmd/hexlet-path-size
 tidy:
 	go mod tidy
 	go fmt ./...

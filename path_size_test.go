@@ -21,7 +21,7 @@ func TestGetPathSize_Dir(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	want := "257B"
+	want := "5.8KB"
 
 	if got != want {
 		t.Errorf("dir testdata/dir1 size is %s, got %s", want, got)
